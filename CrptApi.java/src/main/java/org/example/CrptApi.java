@@ -14,13 +14,13 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class CrptApi {
-    private final HttpClient client;
-    private final ObjectMapper jsonMapper;
+    private final HttpClient httpClient;
     private final Semaphore requestSemaphore;
+    private final ObjectMapper objectMapper;
 
     public CrptApi(TimeUnit rateLimitTimeUnit, int maxRequests) {
-        this.client = HttpClient.newHttpClient();
-        this.jsonMapper = new ObjectMapper();
+        this.httpClient = HttpClient.newHttpClient();
+        this.objectMapper = new ObjectMapper();
         this.requestSemaphore = new Semaphore(maxRequests);
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -30,11 +30,11 @@ public class CrptApi {
 
     @Data
     public static class Root {
-        private RootDescription docDescription;
-        private String RootId;
-        private String RootStatus;
-        private String RootType;
-        private boolean isImportRequest;
+        private RootDescription description;
+        private String id;
+        private String status;
+        private String type;
+        private boolean importRequest;
         private String ownerInn;
         private String participantInn;
         private String producerInn;
@@ -70,7 +70,7 @@ public class CrptApi {
                 return;
             }
 
-            String jsonRequestBody = jsonMapper.writeValueAsString(rootData);
+            String jsonRequestBody = objectMapper.writeValueAsString(rootData);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(endpointUrl))
@@ -79,7 +79,7 @@ public class CrptApi {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonRequestBody))
                     .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
                 System.out.println("Документ успешно создан.");
@@ -94,9 +94,9 @@ public class CrptApi {
     }
 
     public static void main(String[] args) {
-        CrptApi apiService = new CrptApi(TimeUnit.SECONDS, 5);
+        String digitalSignature = "signature";
         CrptApi.Root root = new CrptApi.Root();
-        String signature = "signature";
-        apiService.submitRoot("https://ismp.crpt.ru/api/v3/lk/documents/create", root, signature);
+        CrptApi crptApiService = new CrptApi(TimeUnit.SECONDS, 5);
+        crptApiService.submitRoot("https://ismp.crpt.ru/api/v3/lk/documents/create", root, digitalSignature);
     }
 }
