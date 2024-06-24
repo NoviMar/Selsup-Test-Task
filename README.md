@@ -22,6 +22,7 @@ requestLimit – положительное значение, которое о�
 
 Вызывается по HTTPS метод POST следующий URL:
 https://ismp.crpt.ru/api/v3/lk/documents/create
+
 В теле запроса передается в формате JSON документ: {"description":
 { "participantInn": "string" }, "doc_id": "string", "doc_status": "string",
 "doc_type": "LP_INTRODUCE_GOODS", 109 "importRequest": true,
