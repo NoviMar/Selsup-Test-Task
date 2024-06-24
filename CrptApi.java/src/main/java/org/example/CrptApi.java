@@ -97,6 +97,6 @@ public class CrptApi {
         CrptApi apiService = new CrptApi(TimeUnit.SECONDS, 5);
         CrptApi.Root root = new CrptApi.Root();
         String signature = "signature";
-        apiService.submitRoot("https://ismp.crpt.ru/api/v3/lk/Documents/create", root, signature);
+        apiService.submitRoot("https://ismp.crpt.ru/api/v3/lk/documents/create", root, signature);
     }
 }
